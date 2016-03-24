@@ -1,0 +1,99 @@
+You are running version v1.3.0 of ok.py
+####################################
+Running tests for cal/61A/fa14/proj3
+####################################
+
+Running tests for q9
+====================
+
+Case 1
+------
+>>> # Testing queen place
+>>> colony_queen = ants.Place('Original Queen Location of the Colony')
+>>> ant_queen = ants.Place('Place given to the QueenAnt')
+>>> queen_place = ants.QueenPlace(colony_queen, ant_queen)
+>>> colony_queen.bees = [ants.Bee(1, colony_queen) for _ in range(3)]
+>>> ant_queen.bees = [ants.Bee(2, colony_queen) for _ in range(4)]
+>>> len(queen_place.bees)
+7
+>>> bee_armor = sum(bee.armor for bee in queen_place.bees)
+>>> bee_armor
+11
+
+Case 2
+------
+>>> # Testing double damage
+>>> back = ants.ThrowerAnt()
+>>> thrower_damage = back.damage
+>>> front = ants.FireAnt()
+>>> fire_damage = front.damage
+>>> side_back = ants.ThrowerAnt()
+>>> side_front = ants.ThrowerAnt()
+>>> armor, side_armor = 20, 10
+>>> bee, side_bee = ants.Bee(armor), ants.Bee(side_armor)
+>>> colony.places['tunnel_0_0'].add_insect(back)
+>>> colony.places['tunnel_0_2'].add_insect(queen)
+added QueenAnt(1, None) True
+>>> colony.places['tunnel_0_4'].add_insect(bee)
+>>> colony.places['tunnel_1_1'].add_insect(side_back)
+>>> colony.places['tunnel_1_3'].add_insect(side_front)
+>>> colony.places['tunnel_1_4'].add_insect(side_bee)
+>>> # Simulate a battle in Tunnel 0 (contains Queen)
+>>> back.action(colony)
+>>> armor -= thrower_damage  # No doubling until queen's action
+>>> bee.armor # if failed, damage doubled too early
+19
+>>> queen.action(colony)
+>>> armor -= thrower_damage  # Queen should always deal normal damage
+>>> bee.armor # if failed, Queen damage incorrect
+18
+>>> bee.action(colony)  # Bee moves forward
+>>> colony.places['tunnel_0_3'].add_insect(front)  # Fire ant added
+>>> back.action(colony)
+>>> armor -= 2 * thrower_damage  # Damage doubled in back
+>>> bee.armor  # if failed, back damage incorrect
+16
+>>> queen.action(colony)
+>>> armor -= thrower_damage  # Queen should always deal normal damage
+>>> bee.armor # If failed, Queen damage incorrect (2)
+15
+>>> back.action(colony)
+>>> armor -= 2 * thrower_damage  # Thrower damage still doubled
+>>> bee.armor # Back damage incorrect
+13
+>>> bee.action(colony)
+>>> armor -= 2 * fire_damage  # Fire damage doubled
+>>> bee.armor # if failed, Fire damage incorrect
+7
+>>> # Simulate a battle in Tunnel 1 (no Queen)
+>>> side_bee.armor  # if failed, side bee took damage when it shouldn't have
+10
+>>> side_back.action(colony)
+>>> side_armor -= thrower_damage  # Ant in another tunnel: normal damage
+>>> side_bee.armor # If failed, side back damage is incorrect
+9
+>>> side_front.action(colony)
+>>> side_armor -= thrower_damage  # Ant in another tunnel: normal damage
+>>> side_bee.armor # If failed, side front damage is incorrect
+8
+
+Case 3
+------
+>>> # Testing Game ends when Queen place is infiltrated
+>>> bee = ants.Bee(3)
+>>> colony.places['tunnel_0_1'].add_insect(queen)
+>>> colony.places['tunnel_0_2'].add_insect(bee)
+added Bee(3, None) True
+>>> queen.action(colony)
+>>> len(colony.queen.bees) <= 0 # If failed, Game ended before it should have
+True
+>>> bee.action(colony)
+>>> len(colony.queen.bees) > 0 # Game should have ended
+False
+# Error: expected True got False
+
+-- 2 cases passed (22.22%) for q9 --
+
+Performing authentication
+Please enter your CalNet ID.
+CalNet ID: Quitting ok.
